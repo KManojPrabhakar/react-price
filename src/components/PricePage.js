@@ -1,24 +1,3 @@
-// import React from 'react';
-// // import { Link } from 'react-router-dom';
-
-// const PricePage = () => {
-//   return (
-//     <div>
-//       {/* <h1>React Slingshot</h1>
-
-//       <h2>Get Started</h2>
-//       <ol>
-//         <li>Review the <Link to="/fuel-savings">demo app</Link></li>
-//         <li>Remove the demo and start coding: npm run remove-demo</li>
-//       </ol> */}
-//       <p>Price</p>
-//     </div>
-//   );
-// };
-
-// export default PricePage;
-
-
 import React, { Component } from 'react';
 import { Container, Row, Col } from 'reactstrap';
 
@@ -33,37 +12,74 @@ class PricePage extends Component {
             currentIncludeValue: 0,
             name: '',
             domesticPriceValue: 0,
-            internationalPriceValue: 0
+            internationalPriceValue: 0,
+            deleteIndexValues: []
 
         }
 
         this.allIncludesValues = [];
+        this.deleteIndexValues = [];
     }
 
 
+    findDeleteIndex(elementIndex) {
+
+        let findIndex = false;
+        if (this.state.deleteIndexValues && this.state.deleteIndexValues.length > 0) {
+            this.state.deleteIndexValues.forEach((data) => {
+                if (data.index == elementIndex) {
+                    findIndex = true;
+                }
+            })
+        }
+
+        return findIndex;
+    }
+
 
     getPriceIncludeValues() {
-        let component = [];
+        let component = [], that = this, hideElement = false;
+
+        // console.log(chalkWarning('Webpack generated the following warnings: '));
 
         for (let i = 0; i <= this.state.currentIncludeValue; i++) {
+
+
+
+            hideElement = false;
+            // console.log('I get called from print.js!');
+
+
+            // alert("showElement"+hideElement)
+            hideElement = that.findDeleteIndex(i);
+            // alert("showElement after"+hideElement)
+
+
+            if (hideElement) {
+
+                continue;
+            }
+           
             component.push(
                 <Row key={`includeValues${i}`}>
                     <Col lg={4}>
-                        <input type="text" placeholder="Name"  onChange={(e) => this.updateNameValues(i,e)}  value={this.state["name" + i]} id={`name${i}`}/>
+                        <input type="text" placeholder="Name" onChange={(e) => this.updateNameValues(i, e)} value={this.state["name" + i]} id={`name${i}`} />
                     </Col>
                     <Col lg={4}>
-                        <input type="number" placeholder="Domestic Price" onChange={(e) => this.updateDomesticPriceValues(i,e)} value={this.state["domestic" + i]} id={`domestic${i}`} />
+                        <input type="number" placeholder="Domestic Price" onChange={(e) => this.updateDomesticPriceValues(i, e)} value={this.state["domestic" + i]} id={`domestic${i}`} />
                     </Col>
                     <Col lg={4} className="u_display_flex">
                         <Col lg={12}>
-                            <input type="number" placeholder="International Price" onChange={(e) => this.updateInternationalValues(i,e)} value={this.state["international" + i]} id={`international${i}`} />
+                            <input type="number" placeholder="International Price" onChange={(e) => this.updateInternationalValues(i, e)} value={this.state["international" + i]} id={`international${i}`} />
                         </Col>
-                        
+
                     </Col>
 
                 </Row>
 
             );
+
+
         }
 
 
@@ -71,23 +87,23 @@ class PricePage extends Component {
     }
 
 
-    updateNameValues(indexValue,e) {
+    updateNameValues(indexValue, e) {
 
-        this.setState({['name'+indexValue]:e.target.value},
-        ()=>this.updateCurrentIncludesValue(indexValue))
+        this.setState({ ['name' + indexValue]: e.target.value },
+            () => this.updateCurrentIncludesValue(indexValue))
 
-        
+
 
     }
 
-    updateDomesticPriceValues(indexValue,e) {
-        let domestic = 0,userEnteredDomesticValue =0;
+    updateDomesticPriceValues(indexValue, e) {
+        let domestic = 0, userEnteredDomesticValue = 0;
 
         this.allIncludesValues = [];
-        this.totalDomesticPriceValue =0;
+        this.totalDomesticPriceValue = 0;
 
 
-       
+
 
 
         // console.log("domesticPriceValue before", domestic);
@@ -97,29 +113,29 @@ class PricePage extends Component {
         for (let i = 0; i <= this.state.currentIncludeValue; i++) {
             domestic = 0;
 
-                if(this.state["domestic"+i] || this.state["domestic"+i] == 0)  {
-                    domestic = Number(this.state["domestic"+i]);
+            if (this.state["domestic" + i] || this.state["domestic" + i] == 0) {
+                domestic = Number(this.state["domestic" + i]);
 
-                }
-                // console.log("domesticPriceValue type of", typeof (domestic));
+            }
+            // console.log("domesticPriceValue type of", typeof (domestic));
 
-                this.allIncludesValues.push({
-                    domesticPrice: domestic,
-                })
-
-            
-
-        } 
+            this.allIncludesValues.push({
+                domesticPrice: domestic,
+            })
 
 
 
-        
-        if(this.allIncludesValues && this.allIncludesValues.length>0) {
-            this.allIncludesValues.map((data,index)=> {
+        }
 
 
 
-                if(index!=indexValue) {
+
+        if (this.allIncludesValues && this.allIncludesValues.length > 0) {
+            this.allIncludesValues.map((data, index) => {
+
+
+
+                if (index != indexValue) {
                     this.totalDomesticPriceValue += Number(data.domesticPrice);
 
                 }
@@ -137,17 +153,17 @@ class PricePage extends Component {
         // console.log("totalDomesticPriceValue value", this.totalDomesticPriceValue+userEnteredDomesticValue);
 
 
-        this.setState({ domesticPriceValue: this.totalDomesticPriceValue+userEnteredDomesticValue,["domestic"+indexValue]:e.target.value },
-        ()=>this.updateCurrentIncludesValue(indexValue)
+        this.setState({ domesticPriceValue: this.totalDomesticPriceValue + userEnteredDomesticValue, ["domestic" + indexValue]: e.target.value },
+            () => this.updateCurrentIncludesValue(indexValue)
         );
 
     }
 
-    updateInternationalValues(indexValue,e) {
-        let international = 0,userEnteredInternationalValue =0;
+    updateInternationalValues(indexValue, e) {
+        let international = 0, userEnteredInternationalValue = 0;
 
         this.allInternationalIncludesValues = [];
-        this.totalInternationalPrice =0;
+        this.totalInternationalPrice = 0;
 
 
 
@@ -155,39 +171,39 @@ class PricePage extends Component {
 
 
 
-        
+
 
         userEnteredInternationalValue = Number(e.target.value);
 
 
-        
+
         for (let i = 0; i <= this.state.currentIncludeValue; i++) {
             international = 0;
 
 
 
-                if(this.state["international"+i] || this.state["international"+i] == 0)  {
-                    international = Number(this.state["international"+i]);
+            if (this.state["international" + i] || this.state["international" + i] == 0) {
+                international = Number(this.state["international" + i]);
 
-                }
+            }
 
-                // console.log("totalInternationalPrice type of", typeof (international));
+            // console.log("totalInternationalPrice type of", typeof (international));
 
-                this.allInternationalIncludesValues.push({
-                    internationalPrice: international,
-                })
-
-            
-
-        } 
+            this.allInternationalIncludesValues.push({
+                internationalPrice: international,
+            })
 
 
 
-        
-        if(this.allInternationalIncludesValues && this.allInternationalIncludesValues.length>0) {
-            this.allInternationalIncludesValues.map((data,index)=> {
+        }
 
-                if(index!=indexValue) {
+
+
+
+        if (this.allInternationalIncludesValues && this.allInternationalIncludesValues.length > 0) {
+            this.allInternationalIncludesValues.map((data, index) => {
+
+                if (index != indexValue) {
                     this.totalInternationalPrice += data.internationalPrice;
 
                 }
@@ -203,16 +219,18 @@ class PricePage extends Component {
         // console.log("totalInternationalPrice value", this.totalInternationalPrice+userEnteredInternationalValue);
 
 
-        this.setState({ internationalPriceValue: this.totalInternationalPrice+userEnteredInternationalValue,
-            ["international"+indexValue]:e.target.value },
+        this.setState({
+            internationalPriceValue: this.totalInternationalPrice + userEnteredInternationalValue,
+            ["international" + indexValue]: e.target.value
+        },
 
-            () =>        this.updateCurrentIncludesValue(indexValue)
+            () => this.updateCurrentIncludesValue(indexValue)
 
-            )
+        )
 
     }
 
-   
+
 
     updateCurrentIncludesValue(indexValue) { // for updating index value
 
@@ -225,7 +243,7 @@ class PricePage extends Component {
 
         }
 
-       
+
 
     }
 
@@ -235,24 +253,30 @@ class PricePage extends Component {
 
 
         let deleteIndex = false;
-        
-        
+
+
         if (indexValue == this.userSelectedIndex) {
-            
 
-            if ( !( ( this.state['name' + indexValue] !='' ) || 
-            (  (  Number(this.state['domestic' + indexValue]) != 0  )  ) ||
-            ( ( Number(this.state['international' + indexValue] ) != 0 )  ) ) ) { //for currentIndexValue
 
-                deleteIndex=true
+            if (!((this.state['name' + indexValue] != '') ||
+                ((Number(this.state['domestic' + indexValue]) != 0)) ||
+                ((Number(this.state['international' + indexValue]) != 0)))) { //for currentIndexValue
+
+                deleteIndex = true
 
 
             }
-    
-            if(deleteIndex) {
+
+            if (deleteIndex) {
                 this.userSelectedIndex = null;
-                this.setState({ currentIncludeValue: indexValue })
-    
+                this.deleteIndexValues.push({ index: indexValue })
+                this.setState({
+                    deleteIndexValues: this.deleteIndexValues
+                })
+                
+
+
+
             }
 
 
@@ -273,29 +297,31 @@ class PricePage extends Component {
 
 
 
-            name = this.state["name"+i];
-            domestic = this.state["domestic"+i];
-            international = this.state["international"+i];
-
-          
+            name = this.state["name" + i];
+            domestic = this.state["domestic" + i];
+            international = this.state["international" + i];
 
 
 
 
-            this.allIncludesValues.push({
-                name: name,
-                domesticPrice: domestic,
-                international: international
-            })
+
+            if(name || domestic || international) {
+                this.allIncludesValues.push({
+                    name: name,
+                    domesticPrice: domestic,
+                    international: international
+                })
+            }
+            
 
         }
 
         // console.log("allIncludesValues", this.allIncludesValues);
-        this.objectValues= {
-            includes:this.allIncludesValues
+        this.objectValues = {
+            includes: this.allIncludesValues
         }
 
-        alert("objectValues"+JSON.stringify(this.objectValues));
+        alert("objectValues" + JSON.stringify(this.objectValues));
 
         // console.log("all Object Values",this.objectValues)
 
@@ -334,7 +360,7 @@ class PricePage extends Component {
                         </Col>
                     </Row>
 
-                <button onClick={()=>this.getObjectValues()}>Get</button>
+                    <button onClick={() => this.getObjectValues()}>Get</button>
 
 
 
